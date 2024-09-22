@@ -1,13 +1,12 @@
-const { Router } = require("express");
+import { Router } from "express";
+import { signIn, signUp } from "../controllers/auth.js";
+import multer from "multer";
 
+const upload = multer();
 const router = Router();
 
-router.post("/sign-up", (req, res) => {
-  res.send("This is the registration page");
-});
+router.post("/auth/sign-up", signUp);
 
-router.post("/sign-in", (req, res) => {
-  res.send("This is the signin page");
-});
+router.post("/auth/sign-in", signIn);
 
-module.exports = router;
+export default router;

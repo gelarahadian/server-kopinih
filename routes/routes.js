@@ -1,5 +1,8 @@
-const { Router } = require("express");
-const auth = require("./auth");
+import { Router } from "express";
+import auth from "./auth.js";
+import multer from "multer";
+
+const upload = multer();
 
 const api = Router().use(auth);
 
@@ -7,4 +10,4 @@ const api = Router().use(auth);
 //   res.send("Hello, This is the about page");
 // });
 
-module.exports = api;
+export default Router().use("/api", upload.none(), api);

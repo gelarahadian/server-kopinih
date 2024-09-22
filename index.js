@@ -1,8 +1,11 @@
-const express = require("express");
-const cors = require("cors");
-const routes = require("./routes/routes");
+import express from "express";
+import cors from "cors";
+import routes from "./routes/routes.js";
+import dotenv from "dotenv";
+import { connectDb } from "./models/index.js";
 
 const app = express();
+dotenv.config();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -10,10 +13,12 @@ app.use(routes);
 
 const PORT = process.env.PORT || 8000;
 
-app.get("/", (req, res) => {
-  res.send("Hello, This is start of the application");
+connectDb().then(async () => {
+  app.listen(process.env.PORT, () =>
+    console.log(`Example app listening on port ${PORT}!`)
+  );
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.get("/", (req, res) => {
+  res.send("Hello, This is start of the application");
 });
