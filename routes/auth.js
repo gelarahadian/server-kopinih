@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { signIn, signUp } from "../controllers/auth.js";
-import multer from "multer";
+import { me, signIn, signUp } from "../controllers/auth.js";
+import protect from "../middleware/authProtect.js";
 
-const upload = multer();
 const router = Router();
+
+router.get("/me", protect, me);
 
 router.post("/auth/sign-up", signUp);
 

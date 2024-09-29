@@ -1,5 +1,26 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.js";
+import jwt from "jsonwebtoken";
+
+const me = async (req, res) => {
+  try {
+    const currentUser = await User.findOne({ _id: req.userId }).lean();
+    if (!currentUser) {
+      return res.status(404).json("User not found");
+    }
+
+    delete currentUser.password;
+
+    return res.status(200).json({
+      message: "User fetched successfully",
+      status: "success",
+      data: currentUser,
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json("Server Error");
+  }
+};
 
 const signUp = async (req, res) => {
   const { username, email, password } = req.body;
@@ -48,11 +69,24 @@ const signIn = async (req, res) => {
     return res.status(400).json("Invalid credentials");
   }
 
+  const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+
+  const token = jwt.sign({ id: user._id }, JWT_SECRET_KEY, {
+    expiresIn: "1h",
+  });
+
   res.status(200).json({
     message: "User authenticated successfully",
     status: "success",
-    data: user,
+    data: {
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+      token: token,
+    },
   });
 };
 
-export { signUp, signIn };
+export { me, signUp, signIn };
